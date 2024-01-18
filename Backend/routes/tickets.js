@@ -142,9 +142,9 @@ router.get("/api/support-tickets", async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const status = req.query.status || "";
     const assignedTo = req.query.assignedTo || "";
-    const resolvedOn = req.query.resolvedOn || "ASE";
-    const datecreated = req.query.datecreated || "ASE";
-
+    const resolvedOn = req.query.resolvedOn;
+    const datecreated = req.query.datecreated;
+    console.log(req.query);
     if (assignedTo) {
       const checkAssignedTo = emailSchema.safeParse(assignedTo);
       if (!checkAssignedTo.success) {
@@ -152,14 +152,14 @@ router.get("/api/support-tickets", async (req, res) => {
       }
     }
 
-    const queryObject = {};
-    queryObject.assignedTo = assignedTo;
-    if (
-      status &&
-      (status == "New" || status == "Assigned" || status == "Resolved")
-    )
+    let queryObject = {};
+
+    if (status == "New" || status == "Assigned" || status == "Resolved") {
+      // res.status(404).json({ msg: "Entered status is not in correct format" });
       queryObject.status = status;
-    if (assignedTo) {
+    }
+
+    if (assignedTo.length > 0) {
       queryObject.assignedTo = assignedTo;
     }
     const sortQuery = {};
@@ -177,6 +177,9 @@ router.get("/api/support-tickets", async (req, res) => {
 
     let result;
     // if(queryObject)
+    //Object.keys(queryObject).length === 0 ? null : queryObject
+    console.log(queryObject);
+    if (Object.keys(queryObject).length === 0) queryObject = null;
     result = await Ticket.find(queryObject)
       .sort(sortQuery)
       .skip(page * limit)
