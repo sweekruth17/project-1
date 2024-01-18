@@ -42,7 +42,7 @@ const agentSchema = new mongoose.Schema({
   },
   active: {
     type: Boolean,
-    default: [true, "Please enter if agent active..!!"],
+    default: true,
   },
   dateCreated: { type: Date, default: Date.now },
 });

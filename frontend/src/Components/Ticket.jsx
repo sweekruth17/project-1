@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import axios from "axios";
 const Ticket = () => {
   const [topic, setTopic] = useState("");
   const [description, setDescription] = useState("");
@@ -9,19 +9,47 @@ const Ticket = () => {
   const [assignedTo, setAssignedTo] = useState("");
   const [status, setStatus] = useState("");
   const [resolvedOn, setResolvedOn] = useState("");
-
+  const [result, setResult] = useState("");
   const onChange = () => {
     const selectedDate = document.getElementById("birthday").value;
     const dateObject = new Date(selectedDate);
     console.log(selectedDate);
     console.log(dateObject);
   };
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async (event) => {
+    try {
+      event.preventDefault();
+      console.log("handlesub=========>");
+      let formData = {
+        topic,
+        description,
+        dateCreated,
+        severity,
+        type,
+        assignedTo,
+        status,
+        resolvedOn,
+      };
+      // formData = JSON.stringify(formData);
+      const response = await axios.post(
+        "http://localhost:3000/ticket/api/support-tickets",
+        formData,
+        {
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        }
+      );
+      console.log(response);
+      setResult(JSON.stringify(response));
+      console.log("Data given from server:", response);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <>
-      <form onSubmit={handleSubmit} className="container-fluid text-center m-2">
+      <form className="container-fluid text-center m-2">
         <h4>Add new Ticket Details</h4>
         <div className="row w-50 mx-auto">
           <div className="col bg-primary-subtle  rounded m-2 p-4">
@@ -125,12 +153,17 @@ const Ticket = () => {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              onClick={handleSubmit}
+            >
               Add
             </button>
           </div>
         </div>
       </form>
+      <p>Result:{result}</p>
     </>
   );
 };

@@ -8,6 +8,52 @@ const stringSchema = zod.string();
 const dateSchema = zod.coerce.date();
 const emailSchema = zod.string().email(); //used to check email format
 
+const assignTicketToAgent = async () => {
+  const agents = await Agent.find({ active: true }); // Retrieve active agents
+
+  if (agents.length === 0) {
+    // handle the case when there are no available agents
+    console.error("No available agents");
+    throw new Error("No available agents");
+  }
+
+  // determine next agent using round-robin
+  const nextAgentIndex = await getNextAgentIndex();
+  const nextAgent = agents[nextAgentIndex % agents.length];
+
+  return nextAgent.email; // store agent email
+};
+
+const getNextAgentIndex = async () => {
+  const lastAssignedTicket = await Ticket.find();
+  console.log("lastAssignedTicket===>", lastAssignedTicket);
+  if (!lastAssignedTicket) {
+    // no ticket has been assigned yet, start from the first agent
+    return 0;
+  }
+  let temp = lastAssignedTicket[lastAssignedTicket.length - 1];
+  const lastAssignedAgentEmail = temp.assignedTo;
+  const lastAssignedAgent = await Agent.findOne({
+    email: lastAssignedAgentEmail,
+  });
+
+  if (!lastAssignedAgent) {
+    // The agent associated with the last assigned ticket doesn't exist, start from the first agent
+    return 0;
+  }
+
+  const activeAgents = await Agent.find({ active: true });
+  const lastAssignedAgentIndex = activeAgents.findIndex(
+    (agent) => agent.email === lastAssignedAgentEmail
+  );
+
+  if (lastAssignedAgentIndex === -1) {
+    // The last assigned agent is not in the active agents list, start from the first agent
+    return 0;
+  }
+
+  return (lastAssignedAgentIndex + 1) % activeAgents.length;
+};
 //create a ticket
 router.post("/api/support-tickets", async (req, res) => {
   try {
@@ -42,25 +88,39 @@ router.post("/api/support-tickets", async (req, res) => {
     ) {
       res.status(404).json({ msg: "Entered data is not valid" });
     }
-
-
-    //round robin implementation
-
-
-
-
-    
-    const ticketData = {
-      topic,
-      description,
-      dateCreated: dc,
-      severity,
-      type,
-      assignedTo,
-      status,
-      resolvedOn: ro,
-    };
+    let ticketData = {};
+    //round robin implementation only when there is not agent assigned
+    if (assignedTo.length === 0) {
+      console.log("RR ran=======>");
+      const assignedAgentEmail = await assignTicketToAgent();
+      // const assignedAgentEmail = "olo";
+      if (assignedAgentEmail) {
+        ticketData = {
+          topic,
+          description,
+          dateCreated: dc,
+          severity,
+          type,
+          assignedTo: assignedAgentEmail,
+          status: "Assigned",
+          resolvedOn: ro,
+        };
+      }
+    } else {
+      ticketData = {
+        topic,
+        description,
+        dateCreated: dc,
+        severity,
+        type,
+        assignedTo,
+        status,
+        resolvedOn: ro,
+      };
+    }
+    //insert into DB
     const result = await Ticket.create(ticketData);
+
     if (result) {
       res.status(200).json({ msg: "Ticket successfully created" });
     }
@@ -117,7 +177,7 @@ router.get("/api/support-tickets", async (req, res) => {
 
     let result;
     // if(queryObject)
-    result = await Ticket.find()
+    result = await Ticket.find(queryObject)
       .sort(sortQuery)
       .skip(page * limit)
       .limit(limit);
