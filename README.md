@@ -27,3 +27,4 @@ Features of this Application
 
 ## I have deployed it in vercel:(but i have made the project dynamic and vercel supprts only static pages)
 - link : https://project-1-shvasa.vercel.app/
+- all screenshots link: https://docs.google.com/document/d/1ZeFagRgmbk8bVbBwGp0UYSIzOK21_3gh/edit?usp=sharing&ouid=101484451137896433394&rtpof=true&sd=true
