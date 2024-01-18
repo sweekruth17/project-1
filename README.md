@@ -8,7 +8,7 @@ Features of this Application
 	 - POST /api/support-agents   
 	 - POST /api/support-tickets   
 	 - GET /api/support-tickets
- - Implement round-robin assignment logic to assign a ticket to the next support agent. Change the status to Assigned when an agent is
+ - Implemented round-robin assignment logic to assign a ticket to the next support agent. Change the status to Assigned when an agent is
    assigned
 
 ## To run frontend Part
