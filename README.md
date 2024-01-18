@@ -24,3 +24,6 @@ Features of this Application
  - npm run dev
  - Then to create schema in mongo DB : cd DB
  - node db.js
+![enter image description here](https://drive.google.com/file/d/16H-3FxpJG7l1p0Hic-cwujhrn5bjN4jc/view?usp=sharing)
+
+![enter image description here](https://drive.google.com/file/d/1kjVoIaLZ9RCLBW9nOsCyMMw8VEvz0W7Q/view?usp=sharing)
