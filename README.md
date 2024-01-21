@@ -22,7 +22,7 @@ Features of this Application
  - cd Backend
  - npm i
  - npm run dev
- - Then to create schema in mongo DB(open new terminal come to frontend path then run : cd DB
+ - Then to create schema in mongo DB(open new terminal come to backend path then run : cd DB
  - Before connecting we need a .env file where you have to put the your mongoDB connectin url then run the below command.
  - node db.js
 
