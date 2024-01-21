@@ -22,7 +22,8 @@ Features of this Application
  - cd Backend
  - npm i
  - npm run dev
- - Then to create schema in mongo DB : cd DB
+ - Then to create schema in mongo DB(oen new terminal come to frontend path then run : cd DB
+ - Before connecting we need a .env file where you have to put the your mongoDB connectin url then run the below command.
  - node db.js
 
 ## I have deployed it in vercel:(but i have made the project dynamic and vercel supprts only static pages)
